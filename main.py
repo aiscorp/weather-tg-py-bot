@@ -13,7 +13,7 @@ def telegram_bot(request):
         # Reply with the same message
         bot.sendMessage(chat_id=chat_id, text=update.message.text)
         weather = req_weather()
-        bot.sendMessage(chat_id=chat_id, json.dumps(weather))
+        bot.sendMessage(chat_id=chat_id, text=json.dumps(weather))
     return "okay"
 
 def req_weather():
