@@ -1,19 +1,29 @@
-# from https://github.com/GoogleCloudPlatform/python-docs-samples/blob/master/firestore/cloud-client/snippets.py
-#
-from google.cloud import firestore
+# Test DBInstance
+from dbinstance import DBInstance
+from datetime import datetime
 
-# Add a new document
-db = firestore.Client()
-doc_ref = db.collection(u'test').document()
+db = DBInstance()
 
-doc_ref.set({
-    u'one': u'1 test',
-    u'two': u'2',
-    u'free': 3
+db.logs_add({
+    u'timestamp': datetime.now(),
+    u'type': 'test',
+    u'message': 'Test log message'
 })
 
-# Then query for documents
-test_ref = db.collection(u'test')
+user = {
+    u'name': u'Vasiliy',
+    u'two': u'2',
+    u'free': 3
+}
 
-for doc in test_ref.stream():
-    print(u'{} => {}'.format(doc.id, doc.to_dict()))
+db.users_add(u'user_0001', user)
+db.users_add(u'user_0002', user)
+db.users_add(u'user_0003', user)
+
+logs = db.logs_get_all()
+for log in logs:
+    print(u'{} => {}'.format(log.id, log.to_dict()))
+
+users = db.users_get_all()
+for user in users:
+    print(u'{} => {}'.format(user.id, user.to_dict()))
