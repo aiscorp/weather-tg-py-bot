@@ -13,3 +13,9 @@ gcloud functions deploy telegram_bot \
 ```
 curl "https://api.telegram.org/bot<TELEGRAM_TOKEN>/setWebhook?url=<URL>"
 ```
+
+## Connect DB by articles:
+````
+https://github.com/GoogleCloudPlatform/python-docs-samples/blob/master/firestore/cloud-client/snippets.py
+https://cloud.google.com/docs/authentication/getting-started
+````
