@@ -2,6 +2,9 @@ import os
 import telegram
 import requests
 
+import json
+from types import SimpleNamespace
+
 from dbinstance import DBInstance
 
 ow_token = token = os.environ["OPEN_WEATHER_SECRET_KEY"]
@@ -28,7 +31,7 @@ def telegram_bot(request):
 
 def req_weather():
     weather = ow_get_weather_by_location()
-    return weather["list"][0]["main"]
+    return parse(weather["list"][0]["main"])
 
 
 def ow_get_weather_by_location(lat=51.509865, lon=-0.118092):
@@ -36,3 +39,7 @@ def ow_get_weather_by_location(lat=51.509865, lon=-0.118092):
     if (res.status_code == 200):
         return res.json()
     pass
+
+
+def parse(json):
+    return json.loads(json, object_hook=lambda d: SimpleNamespace(**d))
