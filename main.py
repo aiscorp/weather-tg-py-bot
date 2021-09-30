@@ -4,13 +4,12 @@ import requests
 
 from dbinstance import DBInstance
 
-db = DBInstance()
-
 ow_token = token = os.environ["OPEN_WEATHER_SECRET_KEY"]
 
 
 def telegram_bot(request):
     bot = telegram.Bot(token=os.environ["BOT_SECRET_KEY"])
+    db = DBInstance()
 
     if request.method == "POST":
         update = telegram.Update.de_json(request.get_json(force=True), bot)
