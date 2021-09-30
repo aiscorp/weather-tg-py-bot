@@ -41,5 +41,5 @@ def ow_get_weather_by_location(lat=51.509865, lon=-0.118092):
     pass
 
 
-def parse(json):
-    return json.loads(json, object_hook=lambda d: SimpleNamespace(**d))
+def parse(data):
+    return json.loads(data, object_hook=lambda d: SimpleNamespace(**d))
