@@ -1,8 +1,10 @@
-# from https://github.com/GoogleCloudPlatform/python-docs-samples/blob/master/firestore/cloud-client/snippets.py
+# https://github.com/GoogleCloudPlatform/python-docs-samples/blob/master/firestore/cloud-client/snippets.py
+# https://cloud.google.com/firestore/docs/manage-data/add-data
 #
 import traceback
 import logging
 from datetime import datetime
+
 
 # Singleton class for db
 class DBInstance:
