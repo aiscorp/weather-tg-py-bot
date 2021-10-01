@@ -29,5 +29,5 @@ def telegram_bot(req):
         else:
             bot.send_message(msg.chat.id, f"{msg.chat.username}, не понимаю")
 
-        # db.logs_add(msg.to_dict())
+        db.logs_add(msg.__dict__)
     return "OK"
