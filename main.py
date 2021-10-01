@@ -2,8 +2,8 @@ import os
 import telebot
 from telebot import types
 # ----
-from dbinstance import DBInstance
-from weather_api import OpenWeather
+from core.dbinstance import DBInstance
+from core.weather_api import OpenWeather
 
 # init instances
 bot = telebot.TeleBot(os.environ["BOT_SECRET_KEY"], threaded=False)

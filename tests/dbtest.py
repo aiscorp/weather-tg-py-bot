@@ -1,5 +1,5 @@
 # Test DBInstance
-from dbinstance import DBInstance
+from core.dbinstance import DBInstance
 from datetime import datetime
 
 db = DBInstance()

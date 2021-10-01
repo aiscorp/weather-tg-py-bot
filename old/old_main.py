@@ -2,8 +2,8 @@ import os
 #https://python-telegram-bot.readthedocs.io/en/stable/
 import telegram
 
-from dbinstance import DBInstance
-from weather_api import OpenWeather
+from core.dbinstance import DBInstance
+from core.weather_api import OpenWeather
 
 ow_token = os.environ["OPEN_WEATHER_SECRET_KEY"]
 
