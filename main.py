@@ -1,27 +1,44 @@
 import os
-import telegram
-import requests
-import json
+import telebot
+from telebot import types
+# ----
+from dbinstance import DBInstance
+from weather_api import OpenWeather
 
-ow_token = token=os.environ["OPEN_WEATHER_SECRET_KEY"]
+# init instances
+bot = telebot.TeleBot(os.environ["BOT_SECRET_KEY"], threaded=False)
+ow = OpenWeather(os.environ["OPEN_WEATHER_SECRET_KEY"])
+db = DBInstance()
 
-def telegram_bot(request):
-    bot = telegram.Bot(token=os.environ["BOT_SECRET_KEY"])
-    if request.method == "POST":
-        update = telegram.Update.de_json(request.get_json(force=True), bot)
-        chat_id = update.message.chat.id
-        # Reply with the same message
-        bot.sendMessage(chat_id=chat_id, text=update.message.text)
-        weather = req_weather()
-        bot.sendMessage(chat_id=chat_id, text=json.dumps(weather))
-    return "okay"
 
-def req_weather():
-    weather = ow_get_weather_by_location()
-    return weather["list"][0]["main"]
+def telegram_bot(req):
+    # receive message from server
+    if req.method == "POST":
+        update = types.Update.de_json(req.get_json(force=True))
+        # update = types.Update.de_json(req.get_data().decode('utf-8'))
+        # update = types.Update.de_json(req.text)
+        msg = update.message or update.edited_message
+        db.logs_add(msg.__dict__)
 
-def ow_get_weather_by_location(lat=51.509865, lon=-0.118092):
-    res = requests.get(f"https://api.openweathermap.org/data/2.5/find?lat={lat}&lon={lon}&cnt=1&appid={ow_token}")
-    if (res.status_code == 200):
-        return res.json()
-    pass
+        if msg and msg.text and msg.text[0] == '/':
+            bot.send_message(msg.chat.id, "Тут будут обрабатываться команды")
+        elif msg and msg.text:
+            text = msg.text.lower()
+            if text.find('киев') != -1:
+                city = 'киев'
+            elif text.find('москв') != -1:
+                city = 'москва'
+            elif text.find('балаших') != -1:
+                city = 'балашиха'
+            elif text.find('нью') != -1:
+                city = 'нью йорк'
+            elif text.find('лондон') != -1:
+                city = 'лондон'
+            else:
+                city = 'hell'
+
+            weather = ow.by_name(city)
+            bot.send_message(msg.chat.id, f"{msg.chat.username}, {ow.str_now_emoji(weather)}")
+        else:
+            bot.send_message(msg.chat.id, f"{msg.chat.username}, не понимаю")
+    return "OK"
