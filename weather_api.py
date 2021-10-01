@@ -2,6 +2,8 @@ import traceback
 import requests
 import json
 import logging
+import flag
+
 from types import SimpleNamespace
 
 
@@ -21,14 +23,10 @@ class OpenWeather:
         except Exception as e:
             logging.error(traceback.format_exc())
 
-    @staticmethod
-    def parse(data):
-        return json.loads(data, object_hook=lambda d: SimpleNamespace(**d))
-
     # https://openweathermap.org/current
     def by_geo_loc(self, lat=51.509865, lon=-0.118092):
         try:
-            res = requests.get(f"https://api.openweathermap.org/data/2.5/find?"
+            res = requests.get(f"https://api.openweathermap.org/data/2.5/weather?"
                                f"lat={lat}&lon={lon}&cnt=1&appid={self.token}&lang={self.lang}&units=metric")
             if res.status_code == 200:
                 return self.parse(res.text)
@@ -56,6 +54,34 @@ class OpenWeather:
                 return self.parse(res.text)
         except Exception as e:
             logging.error(traceback.format_exc())
+
+    @staticmethod
+    def parse(data):
+        return json.loads(data, object_hook=lambda d: SimpleNamespace(**d))
+
+    @staticmethod
+    def str_now(weather_response):
+        w = weather_response
+        return f"в городе\xa0{w.name}{flag.flag(w.sys.country)} сейчас {w.weather[0].description}, температура {w.main.temp:.{1}f}℃, " \
+               f"давление {w.main.pressure / 1.333:.{0}f} мм рт.ст., влажность {w.main.humidity :.{0}f}%, " \
+               f"скорость ветра {w.wind.speed:.{2}f} м/с, облачность {w.clouds.all}%"
+
+    @staticmethod
+    def str_now_emoji(weather_response):
+        w = weather_response
+        clouds = '⛅'
+        humidity = '💧'
+        rain = '☔'
+        snow = '❄'
+        temp = '❄' if w.main.temp < 5 else '☀'
+        wind = '🚩'
+        pressure = '🎈'
+        return f"в городе\xa0{w.name}{flag.flag(w.sys.country)} сейчас {w.weather[0].description},  " \
+               f"{temp}\xa0{w.main.temp:.{1}f}℃,  " \
+               f"{pressure}{w.main.pressure / 1.333:.{0}f} мм рт.ст.,  " \
+               f"{humidity}{w.main.humidity :.{0}f}%,  " \
+               f"{wind}{w.wind.speed:.{2}f} м/с,  " \
+               f"{clouds}\xa0{w.clouds.all}%"
 
 
 # by_geo_loc() and by_name() response example
