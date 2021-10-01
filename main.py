@@ -5,19 +5,17 @@ from telebot import types
 from dbinstance import DBInstance
 from weather_api import OpenWeather
 
+# init instances
+bot = telebot.TeleBot(os.environ["BOT_SECRET_KEY"])
+ow = OpenWeather(os.environ["OPEN_WEATHER_SECRET_KEY"])
+db = DBInstance()
 
-def telegram_bot(**kwargs):
-    print(f'Received: "{kwargs}"')
-    # init instances
-    bot = telebot.TeleBot(os.environ["BOT_SECRET_KEY"])
-    ow = OpenWeather(os.environ["OPEN_WEATHER_SECRET_KEY"])
-    db = DBInstance()
 
+def telegram_bot(update):
     # receive message from server
-    update = types.Update.de_json(kwargs)
+    update = types.Update.de_json(update)
     msg = update.message or update.edited_message
-    # log
-    print(f'Received: "{kwargs}"')
+
     db.logs_add(msg.to_dict())
 
     if msg and msg.text and msg.text[0] == '/':
