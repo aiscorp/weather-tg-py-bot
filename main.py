@@ -13,11 +13,8 @@ db = DBInstance()
 
 def telegram_bot(req):
     # receive message from server
-    # update = types.Update.de_json(req.get_data().decode('utf-8'))
     update = types.Update.de_json(req.text)
     msg = update.message or update.edited_message
-
-    db.logs_add(msg.to_dict())
 
     if msg and msg.text and msg.text[0] == '/':
         weather = ow.by_name('лондон')
@@ -28,3 +25,5 @@ def telegram_bot(req):
         # route_command(message.text.lower(), message)
     else:
         bot.send_message(msg.chat.id, f"{msg.chat.username}, не понимаю")
+
+    db.logs_add(msg)
