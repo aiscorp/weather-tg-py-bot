@@ -1,40 +1,30 @@
 import os
-import telegram
-import requests
-
-import json
-from types import SimpleNamespace
-
+import telebot
+from telebot import types
+# ----
 from dbinstance import DBInstance
+from weather_api import OpenWeather
 
-ow_token = token = os.environ["OPEN_WEATHER_SECRET_KEY"]
-
-
-def telegram_bot(request):
-    bot = telegram.Bot(token=os.environ["BOT_SECRET_KEY"])
-    db = DBInstance()
-
-    if request.method == "POST":
-        update = telegram.Update.de_json(request.get_json(force=True), bot)
-        message = update.message
-
-        chat_id = update.message.chat.id
-        user = update.message.chat.username
-
-        weather = ow_get_weather_by_location()
-        bot.sendMessage(chat_id=chat_id,
-                        text=f"{user}, в Лондоне сейчас {(weather.temp - 273.15):.{1}f}℃, а влажность {weather.humidity:.{0}f}%")
-
-        db.logs_add(message.to_dict())
-    return "OK"
+# init instances
+bot = telebot.TeleBot(os.environ["BOT_SECRET_KEY"])
+ow = OpenWeather(os.environ["OPEN_WEATHER_SECRET_KEY"])
+db = DBInstance()
 
 
-def ow_get_weather_by_location(lat=51.509865, lon=-0.118092):
-    res = requests.get(f"https://api.openweathermap.org/data/2.5/find?lat={lat}&lon={lon}&cnt=1&appid={ow_token}")
-    if (res.status_code == 200):
-        return parse(res.text).list[0].main
-    pass
+def telegram_bot(**kwargs):
+    # receive message from server
+    update = types.Update.de_json(kwargs)
+    msg = update.message or update.edited_message
+    # log
+    print(f'Received: "{kwargs}"')
+    db.logs_add(msg.to_dict())
 
-
-def parse(data):
-    return json.loads(data, object_hook=lambda d: SimpleNamespace(**d))
+    if msg and msg.text and msg.text[0] == '/':
+        weather = ow.by_name('лондон')
+        bot.send_message(msg.chat.id, f"{msg.chat.username}, {ow.str_now_emoji(weather)}")
+    elif msg and msg.text:
+        weather = ow.by_name('киев')
+        bot.send_message(msg.chat.id, f"{msg.chat.username}, {ow.str_now_emoji(weather)}")
+        # route_command(message.text.lower(), message)
+    else:
+        bot.send_message(msg.chat.id, f"{msg.chat.username}, не понимаю")
