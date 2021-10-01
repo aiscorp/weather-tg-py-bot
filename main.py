@@ -11,9 +11,9 @@ ow = OpenWeather(os.environ["OPEN_WEATHER_SECRET_KEY"])
 db = DBInstance()
 
 
-def telegram_bot(update):
+def telegram_bot(req):
     # receive message from server
-    update = types.Update.de_json(update)
+    update = types.Update.de_json(req.get_json(force=True))
     msg = update.message or update.edited_message
 
     db.logs_add(msg.to_dict())
