@@ -13,7 +13,8 @@ db = DBInstance()
 
 def telegram_bot(req):
     # receive message from server
-    update = types.Update.de_json(req.get_json(force=True))
+    # update = types.Update.de_json(req.get_data().decode('utf-8'))
+    update = types.Update.de_json(req.text)
     msg = update.message or update.edited_message
 
     db.logs_add(msg.to_dict())
