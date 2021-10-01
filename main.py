@@ -5,13 +5,14 @@ from telebot import types
 from dbinstance import DBInstance
 from weather_api import OpenWeather
 
-# init instances
-bot = telebot.TeleBot(os.environ["BOT_SECRET_KEY"])
-ow = OpenWeather(os.environ["OPEN_WEATHER_SECRET_KEY"])
-db = DBInstance()
-
 
 def telegram_bot(**kwargs):
+    print(f'Received: "{kwargs}"')
+    # init instances
+    bot = telebot.TeleBot(os.environ["BOT_SECRET_KEY"])
+    ow = OpenWeather(os.environ["OPEN_WEATHER_SECRET_KEY"])
+    db = DBInstance()
+
     # receive message from server
     update = types.Update.de_json(kwargs)
     msg = update.message or update.edited_message
