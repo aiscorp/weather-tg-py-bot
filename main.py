@@ -19,7 +19,11 @@ def telegram_bot(req):
         # update = types.Update.de_json(req.text)
         msg = update.message or update.edited_message
 
-        db.logs_add(ow.parse(req.get_json(force=True)))
+        db.logs_add({
+            'username': msg.chat.username,
+            'chat.id': msg.chat.id,
+            'text': msg.text
+        })
 
         if msg and msg.text and msg.text[0] == '/':
             bot.send_message(msg.chat.id, "Тут будут обрабатываться команды")
