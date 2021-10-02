@@ -19,28 +19,28 @@ def telegram_bot(req):
         # update = types.Update.de_json(req.text)
         msg = update.message or update.edited_message
 
-        # db.logs_add({
-        #     u'username': msg.chat.username,
-        #     u'chat.id': msg.chat.id,
-        #     u'text': msg.text
-        # })
+        db.logs_add({
+            u'username': msg.chat.username,
+            u'chat.id': msg.chat.id,
+            u'text': msg.text
+        })
 
         if msg and msg.text and msg.text[0] == '/':
             bot.send_message(msg.chat.id, "Тут будут обрабатываться команды")
         elif msg and msg.text:
             text = msg.text.lower()
+            city = u'hell'
+
             if text.find('киев') != -1:
-                city = 'киев'
+                city = u'киев'
             elif text.find('москв') != -1:
-                city = 'москва'
+                city = u'москва'
             elif text.find('балаших') != -1:
-                city = 'балашиха'
+                city = u'балашиха'
             elif text.find('нью') != -1:
-                city = 'нью йорк'
+                city = u'нью йорк'
             elif text.find('лондон') != -1:
-                city = 'лондон'
-            else:
-                city = 'hell'
+                city = u'лондон'
 
             weather = ow.by_name(city)
             bot.send_message(msg.chat.id, f"{msg.chat.username}, {ow.str_now_emoji(weather)}")
