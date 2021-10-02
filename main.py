@@ -42,8 +42,7 @@ def telegram_bot(req):
             elif text.find('лондон') != -1:
                 city = u'лондон'
 
-            weather = ow.by_name(city)
-            bot.send_message(msg.chat.id, f"{msg.chat.username}, {ow.str_now_emoji(weather)}")
+            bot.send_message(msg.chat.id, f"{msg.chat.username}, {ow.str_now_emoji(ow.by_name(city))}")
         else:
             bot.send_message(msg.chat.id, f"{msg.chat.username}, не понимаю")
     return "OK"
