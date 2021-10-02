@@ -43,7 +43,7 @@ def telegram_bot(req):
 
             weather = ow.by_name(city)
             if weather is not None:
-                bot.send_message(msg.chat.id, f"{msg.chat.username}, {ow.str_now_emoji(ow.by_name(city))}")
+                bot.send_message(msg.chat.id, f"{msg.chat.username}, {ow.str_now_emoji(weather)}")
             else:
                 bot.send_message(msg.chat.id, f"{msg.chat.username}, не могу найти такой город")
         else:
