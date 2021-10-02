@@ -1,5 +1,5 @@
 # Test weather api
-from core.weather_api import OpenWeather
+from weather_api import OpenWeather
 
 ow = OpenWeather(token)  # type token
 
