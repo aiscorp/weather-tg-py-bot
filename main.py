@@ -30,7 +30,6 @@ def telegram_bot(req):
         elif msg and msg.text:
             text = msg.text.lower()
             city = u'hell'
-
             if text.find('киев') != -1:
                 city = u'киев'
             elif text.find('москв') != -1:
@@ -38,12 +37,15 @@ def telegram_bot(req):
             elif text.find('балаших') != -1:
                 city = u'балашиха'
             elif text.find('нью') != -1:
-                city = u'нью йорк'
+                city = u'нью-йорк'
             elif text.find('лондон') != -1:
                 city = u'лондон'
 
-            # bot.send_message(msg.chat.id, f"{msg.chat.username}, {ow.str_now_emoji(ow.by_name(city))}")
-            bot.send_message(msg.chat.id, f"{msg.chat.username}, {ow.by_name(city)}")
+            weather = ow.by_name(city)
+            if weather is not None:
+                bot.send_message(msg.chat.id, f"{msg.chat.username}, {ow.str_now_emoji(ow.by_name(city))}")
+            else:
+                bot.send_message(msg.chat.id, f"{msg.chat.username}, не могу найти такой город")
         else:
             bot.send_message(msg.chat.id, f"{msg.chat.username}, не понимаю")
     return "OK"
